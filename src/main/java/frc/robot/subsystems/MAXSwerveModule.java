@@ -14,10 +14,11 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import frc.robot.Constants.ModuleConstants;
 
-public class MAXSwerveModule {
+public class MAXSwerveModule implements Sendable {
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;
 
@@ -161,4 +162,10 @@ public class MAXSwerveModule {
   public void resetEncoders() {
     m_drivingEncoder.setPosition(0);
   }
+
+  public void initSendable(SendableBuilder builder){
+    builder.addDoubleProperty("Wheel Speed", m_drivingEncoder::getVelocity, null);
+    builder.addDoubleProperty("Wheel Angle", () -> Math.toDegrees(m_turningEncoder.getPosition() - m_chassisAngularOffset), null);
+  }
+
 }

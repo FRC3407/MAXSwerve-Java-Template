@@ -28,9 +28,9 @@ public class DriveCommand extends CommandBase {
   @Override
   public void execute() {
     m_driveSubsystem.drive(
-      -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-      -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+      -MathUtil.applyDeadband(m_driverController.getRightY(), OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+      -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
       true, true);
   }
 

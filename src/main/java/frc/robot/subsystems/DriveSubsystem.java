@@ -73,6 +73,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    SmartDashboard.putData("frontLeft", m_frontLeft);
+    SmartDashboard.putData("frontRight", m_frontRight);
+    SmartDashboard.putData("rearLeft", m_rearLeft);
+    SmartDashboard.putData("rearRight", m_rearRight);
   }
 
   @Override
@@ -87,8 +91,8 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
 
-        SmartDashboard.putNumber("X in meters", getPose().getX());
-        SmartDashboard.putNumber("Y in meters", getPose().getY());
+        SmartDashboard.putNumber("Y in meters", getPose().getX());
+        SmartDashboard.putNumber("X in meters", getPose().getY());
   }
 
   /**
@@ -195,6 +199,20 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
+
+    SmartDashboard.putNumber("frontLeft/targetspeed", swerveModuleStates[0].speedMetersPerSecond);
+    SmartDashboard.putNumber("frontLeft/targetangle", swerveModuleStates[0].angle.getDegrees());
+
+    SmartDashboard.putNumber("frontRight/targetspeed", swerveModuleStates[1].speedMetersPerSecond);
+    SmartDashboard.putNumber("frontRight/targetangle", swerveModuleStates[1].angle.getDegrees());
+
+    SmartDashboard.putNumber("rearLeft/targetspeed", swerveModuleStates[2].speedMetersPerSecond);
+    SmartDashboard.putNumber("rearLeft/targetangle", swerveModuleStates[2].angle.getDegrees());
+
+    SmartDashboard.putNumber("rearRight/targetspeed", swerveModuleStates[3].speedMetersPerSecond);
+    SmartDashboard.putNumber("rearRight/targetangle", swerveModuleStates[3].angle.getDegrees());
+
+
   }
 
   /**
