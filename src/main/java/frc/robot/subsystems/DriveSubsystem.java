@@ -135,10 +135,11 @@ public class DriveSubsystem extends SubsystemBase {
 
     double xSpeedCommanded;
     double ySpeedCommanded;
+    boolean isStopped = Math.abs(xSpeed) <= MIN_SPEED && Math.abs(ySpeed) <= MIN_SPEED;
 
     if (rateLimit) {
       // Convert XY to polar for rate limiting
-      double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
+      double inputTranslationDir = isStopped ? m_currentTranslationDir : Math.atan2(ySpeed, xSpeed);
       double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
 
       // Calculate the direction slew rate based on an estimate of the lateral acceleration
@@ -195,8 +196,6 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    boolean isStopped = Math.abs(chassisSpeeds.vxMetersPerSecond) <= MIN_SPEED
-        && Math.abs(chassisSpeeds.vyMetersPerSecond) <= MIN_SPEED;
     if (isStopped) {
       for (int i = 0; i < m_prevAngle.length; i++) {
         swerveModuleStates[i].angle = m_prevAngle[i];
