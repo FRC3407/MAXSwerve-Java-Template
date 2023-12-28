@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.MathUtil;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 
 public class DriveCommand extends CommandBase {
@@ -31,7 +32,7 @@ public class DriveCommand extends CommandBase {
       -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-      true, true);
+      DriveConstants.kFieldCentric, DriveConstants.kRateLimited);
   }
 
   // Called once the command ends or is interrupted.
