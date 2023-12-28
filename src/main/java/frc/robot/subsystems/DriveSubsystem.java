@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -72,8 +73,6 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
       });
-
-  private static final double MIN_SPEED = 0.01;
 
   private Rotation2d[] m_prevAngle = new Rotation2d[4];
 
@@ -135,7 +134,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     double xSpeedCommanded;
     double ySpeedCommanded;
-    boolean isStopped = Math.abs(xSpeed) <= MIN_SPEED && Math.abs(ySpeed) <= MIN_SPEED;
+    final boolean isStopped = Math.abs(xSpeed) <= (OIConstants.kDriveDeadband / 2.0)
+        && Math.abs(ySpeed) <= (OIConstants.kDriveDeadband / 2.0);
 
     if (rateLimit) {
       // Convert XY to polar for rate limiting
@@ -154,11 +154,11 @@ public class DriveSubsystem extends SubsystemBase {
       double currentTime = WPIUtilJNI.now() * 1e-6;
       double elapsedTime = currentTime - m_prevTime;
       double angleDif = SwerveUtils.AngleDifference(inputTranslationDir, m_currentTranslationDir);
-      if (angleDif < 0.45*Math.PI) {
+      if (angleDif < 0.45 * Math.PI) {
         m_currentTranslationDir = SwerveUtils.StepTowardsCircular(m_currentTranslationDir, inputTranslationDir, directionSlewRate * elapsedTime);
         m_currentTranslationMag = m_magLimiter.calculate(inputTranslationMag);
       }
-      else if (angleDif > 0.85*Math.PI) {
+      else if (angleDif > 0.85 * Math.PI) {
         if (m_currentTranslationMag > 1e-4) { //some small number to avoid floating-point errors with equality checking
           // keep currentTranslationDir unchanged
           m_currentTranslationMag = m_magLimiter.calculate(0.0);
@@ -178,7 +178,6 @@ public class DriveSubsystem extends SubsystemBase {
       ySpeedCommanded = m_currentTranslationMag * Math.sin(m_currentTranslationDir);
       m_currentRotation = m_rotLimiter.calculate(rot);
 
-
     } else {
       xSpeedCommanded = xSpeed;
       ySpeedCommanded = ySpeed;
@@ -191,9 +190,9 @@ public class DriveSubsystem extends SubsystemBase {
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-            fieldRelative
-                    ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(-m_gyro.getAngle()))
-                    : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+        fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(-m_gyro.getAngle()))
+            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     if (isStopped) {
